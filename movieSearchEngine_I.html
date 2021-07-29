@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: black;
+    }
+    #container {
+      width: 80%;
+      height: 700px;
+      margin: auto;
+    }
+
+    .details {
+      font-size: 20px;
+      line-height: 1.8;
+      width: 100%;
+      text-align: left;
+      margin-left: 55%;
+      color: rgb(192, 192, 192);
+    }
+    .search {
+      text-align: center;
+      margin-top: 4%;
+    }
+    #moviename {
+      width: 25%;
+      height: 35px;
+      margin-top: 15px;
+      background-color: #fff;
+      border-radius: 5px;
+      color: black;
+      font-size: 17px;
+    }
+    .btn {
+      height: 35px;
+      padding: 0px 15px;
+      padding-bottom: 2px;
+      background-color: orange;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 30px;
+    }
+    h1 {
+      color: red;
+    }
+    #movies {
+      display: grid;
+      grid-template-columns: repeat(3, 25%);
+      grid-gap: 3%;
+      height: 800px;
+      width: 100%;
+      margin-top: 5%;
+    }
+    img {
+      width: 250px;
+      height: 350px;
+      float: left;
+      border-radius: 5px;
+      border: 1px solid #fff;
+    }
+    .main {
+      height: 330px;
+      width: 160%;
+    }
+    .recommend {
+      color: #fff;
+      margin-top: 5%;
+      background-color: rgb(143, 0, 0);
+      float: left;
+      font-weight: bold;
+      padding: 0px 10px;
+      border-radius: 30px;
+    }
+  </style>
+  <body>
+    <div id="container">
+      <div class="search">
+        <h1>Online Movie Search Engine</h1>
+        <input type="text" id="moviename" />
+        <button class="btn" onclick="findMovie()">Search</button>
+      </div>
+
+      <div id="movies"></div>
+    </div>
+  </body>
+</html>
+<script>
+  //Title, Year, Released,Imdb rating
+  var movie_div = document.getElementById("movies");
+  async function findMovie() {
+    movie_div.innerHTML = null;
+    let movie = document.getElementById("moviename").value;
+    try {
+      let res = await fetch(
+        `http://www.omdbapi.com/?t=${movie}&apikey=10a70340`
+        // `http://www.omdbapi.com/?t=interstellar&apikey=10a70340`
+      );
+      let data = await res.json();
+      console.log(data); ///if else
+      if (data.Response == "False") {
+        alert("Movies not found ");
+        return;
+      } else {
+        console.log(data);
+        var main_div = document.createElement("div");
+        main_div.setAttribute("class", "main");
+
+        var movieimg = document.createElement("div");
+        var details = document.createElement("div");
+        details.setAttribute("class", "details");
+
+        var title = document.createElement("div");
+        title.innerHTML = `Movie: ${data.Title}`;
+
+        var year = document.createElement("div");
+        year.innerHTML = `Released: ${data.Released}`;
+
+        var runTime = document.createElement("div");
+        runTime.innerHTML = `RunTime: ${data.Runtime}`;
+
+        var description = document.createElement("div");
+        description.innerHTML = `Description: ${data.Plot}`;
+
+        var img = document.createElement("img");
+        img.src = data.Poster;
+
+        var imdb = document.createElement("div");
+        imdb.innerHTML = `IMDb:${data.imdbRating}`;
+
+        var recommend = document.createElement("div");
+        recommend.setAttribute("class", "recommend");
+        recommend.innerHTML = "Recommended ";
+
+        if (data.imdbRating > 8.5) {
+          details.append(title, year, imdb, runTime, description, recommend);
+        } else {
+          details.append(title, year, imdb, runTime, description);
+        }
+
+        movieimg.append(img);
+
+        main_div.append(movieimg, details);
+
+        movie_div.append(main_div);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  // findMovie();
+</script>
